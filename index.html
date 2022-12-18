@@ -9,11 +9,17 @@
   <title>Word-Cross</title>
 </head>
 <body>
+  <table id="stats">
+    <tr>
+      <td><b>Level</b>: <span id="level">0</span> | </td>
+      <td><b>Score</b>: <span id="score">0</span> | </td>
+      <td><b>Total</b>: <span id="total">0</span></td>
+    </tr>
+  </table>
   <table id="playgrid"></table>
-  <p>Score: <span id="score">0</span></p>
-  <p>Level: <span id="level">0</span></p>
-  <p>Total: <span id="total">0</span></p>
-  <p id="wordlist"></p>
+  <div id="words">
+    <ul id="wordlist"></ul>
+  </div>
   <script src="workable.js"></script>
   <script src="script.js"></script>
 </body>

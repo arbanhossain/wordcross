@@ -346,8 +346,8 @@ const UpdateScore = () => {
   document.getElementById("total").innerText = GAME_STATE.Total;
   let wordlist = ``;
   GAME_STATE.Solve.forEach(word => {
-    if (GAME_STATE.Found.includes(word)) wordlist += `<span><strike>${word}</strike></span><br>`;
-    else wordlist += `<span>${word}</span><br>`;
+    if (GAME_STATE.Found.includes(word)) wordlist += `<li><strike>${word}</strike></li><br>`;
+    else wordlist += `<li>${word}</li><br>`;
   })
   document.getElementById("wordlist").innerHTML = wordlist;
   //console.log(GAME_STATE.Score);
