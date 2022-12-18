@@ -2,9 +2,11 @@ console.log(WORDS_ARRAY.length);
 console.log(WORDS_SET.size);
 
 const GAME_STATE = {
-  N: 4,
+  N: 5,
   CurrentEligible: [],
-  CurrentWord: ''
+  CurrentWord: '',
+  Start: null,
+  End: null,
 }
 
 let IsMouseDown = false;
@@ -51,31 +53,62 @@ const MakeTable = (N) => {
   AddEvents();
 }
 
+const IsOnALine = (End) => {
+  let Start = GAME_STATE.Start;
+  let xs = parseInt(Start[0]);
+  let ys = parseInt(Start[1]);
+  let xe = parseInt(End[0]);
+  let ye = parseInt(End[1]);
+
+  return (xs == xe || ys == ye || Math.abs(xs-xe) == Math.abs(ys-ye));
+}
+
+const GetCellsBetween = () => {
+  let Start = GAME_STATE.Start;
+  let End = GAME_STATE.End;
+  let Cells = [];
+  
+}
+
+const Highlight = () => {
+  let Start = GAME_STATE.Start;
+  let End = GAME_STATE.End;
+  let StartString = `${Start[0]}-${Start[1]}`;
+  let EndString = `${End[0]}-${End[1]}`;
+  Array.from(document.getElementsByClassName('cell')).forEach(cell => {
+    let CellString = `${cell.dataset.row}-${cell.dataset.col}`;
+    if (CellString == StartString || CellString == EndString) cell.classList.add("highlighted");
+  })
+}
+
 const AddEvents = () => {
   Array.from(document.getElementsByClassName('cell')).forEach(cell => {
     //console.log(cell)
     cell.addEventListener("mousedown", (e) => {
       e.preventDefault();
       IsMouseDown = true;
-      if (!cell.classList.contains("highlighted")){
-        cell.classList.add("highlighted");
-        GAME_STATE.CurrentEligible = GetNeighbors(cell.dataset.row, cell.dataset.col);
-        GAME_STATE.CurrentWord += cell.innerText;
-      }
+      cell.classList.add("highlighted");
+      GAME_STATE.Start = [cell.dataset.row, cell.dataset.col]
     });
     cell.addEventListener("mouseover", (e) => {
       e.preventDefault();
       if (IsMouseDown) {
-        if (!cell.classList.contains("highlighted") && GAME_STATE.CurrentEligible.includes(`${cell.dataset.row}-${cell.dataset.col}`)){
-          cell.classList.add("highlighted");
-          GAME_STATE.CurrentEligible = GetNeighbors(cell.dataset.row, cell.dataset.col);
-          GAME_STATE.CurrentWord += cell.innerText;
+        if (IsOnALine([cell.dataset.row, cell.dataset.col])){
+          UnHighlight();
+          GAME_STATE.End = [cell.dataset.row, cell.dataset.col];
+          Highlight();
         } else {
           console.log([cell.dataset.row, cell.dataset.col]);
         }
       }
     })
   })
+}
+
+const UnHighlight = () => {
+  Array.from(document.getElementsByClassName('cell')).forEach(cell => {
+    cell.classList.remove("highlighted");
+  });
 }
 
 const GameLogic = () => {
@@ -85,9 +118,7 @@ const GameLogic = () => {
 
 document.addEventListener("mouseup", () => {
   IsMouseDown = false;
-  Array.from(document.getElementsByClassName('cell')).forEach(cell => {
-    cell.classList.remove("highlighted");
-  })
+  UnHighlight();
   console.log(GAME_STATE.CurrentWord);
   GAME_STATE.CurrentWord = '';
 })
