@@ -67,17 +67,49 @@ const GetCellsBetween = () => {
   let Start = GAME_STATE.Start;
   let End = GAME_STATE.End;
   let Cells = [];
-  
+  let xs = parseInt(Start[0]);
+  let ys = parseInt(Start[1]);
+  let xe = parseInt(End[0]);
+  let ye = parseInt(End[1]);
+  let xDelta, yDelta;
+  if (xe == xs) xDelta = 0;
+  else xDelta = (xe - xs) / Math.abs(xe - xs);
+  if (ye == ys) yDelta = 0;
+  else yDelta = (ye - ys) / Math.abs(ye - ys);
+  // console.log(`
+  //   StartX: ${xs}
+  //   StartY: ${ys}
+  //   EndX: ${xe}
+  //   EndY: ${ye}
+  //   IncrementX: ${xDelta}
+  //   IncrementY: ${yDelta}
+  // `)
+  for(let i = xs, j = ys; i != xe || j != ye; i+=xDelta, j+=yDelta) {
+    Cells.push(`${i}-${j}`);
+  }
+  // Push End
+  Cells.push(`${xe}-${ye}`);
+  return Cells;
 }
 
 const Highlight = () => {
-  let Start = GAME_STATE.Start;
-  let End = GAME_STATE.End;
-  let StartString = `${Start[0]}-${Start[1]}`;
-  let EndString = `${End[0]}-${End[1]}`;
+  let Cells = GetCellsBetween();
   Array.from(document.getElementsByClassName('cell')).forEach(cell => {
     let CellString = `${cell.dataset.row}-${cell.dataset.col}`;
-    if (CellString == StartString || CellString == EndString) cell.classList.add("highlighted");
+    if (Cells.includes(CellString)) {
+      cell.classList.add("highlighted");
+    };
+  })
+  GetHighlightedWord();
+}
+
+const GetHighlightedWord = () => {
+  GAME_STATE.CurrentWord = '';
+  let HighlitedCells = GetCellsBetween();
+  let Cells = Array.from(document.getElementsByClassName('cell'));
+  HighlitedCells.forEach(highlight => {
+    let cell = Cells.filter(el => `${el.dataset.row}-${el.dataset.col}` == highlight)[0];
+    GAME_STATE.CurrentWord += cell.innerText;
   })
 }
 
@@ -98,7 +130,7 @@ const AddEvents = () => {
           GAME_STATE.End = [cell.dataset.row, cell.dataset.col];
           Highlight();
         } else {
-          console.log([cell.dataset.row, cell.dataset.col]);
+          //console.log([cell.dataset.row, cell.dataset.col]);
         }
       }
     })
